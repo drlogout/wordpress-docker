@@ -1,0 +1,32 @@
+---
+
+- name: Configure postfix
+  hosts: localhost
+  remote_user: root
+  pre_tasks:
+    - stat: 
+        path: /ansible/postfix-relay.installed
+      register: installed
+    
+    - command: hostname -f
+      register: hostname
+
+    - set_fact:
+        postfix_relay_smtp_host: "{{ lookup('env','SMTP_HOST') }}"
+        postfix_relay_smtp_port: "{{ lookup('env','SMTP_PORT') | default('587', true) }}"
+        postfix_relay_smtp_user: "{{ lookup('env','SMTP_USER') }}"
+        postfix_relay_smtp_password: "{{ lookup('env','SMTP_PASSWORD') }}"
+        postfix_relay_from_name: "{{ lookup('env','SMTP_FROM_NAME') | default(hostname.stdout, true) }}"
+        postfix_relay_root_forward: "{{ lookup('env','ROOT_FORWARD') }}"
+        postfix_relay_hostname: "{{ hostname.stdout }}"
+        postfix_relay_skip_install: true
+        postfix_relay_receipient_mappings: 
+          - { src: "@localhost", dest: "@{{ hostname.stdout }}" }
+          - { src: "root", dest: "root@{{ hostname.stdout }}" }
+        postfix_relay_set_install_mark: true
+        force: "{{ lookup('env','FORCE_CONFIG') | default('no', true) }}"
+        postfix_installed: "{{ installed.stat.exists }}"
+
+  roles:
+    - { role: ansible-role-postfix-relay, when: postfix_installed == false or force == 'yes' }
+   
