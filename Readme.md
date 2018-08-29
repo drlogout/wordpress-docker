@@ -1,5 +1,7 @@
-# wordpress
+# wordpress-docker
 
+From the wordpress docker image it's not possible to send emails e.g. password resets, notifications about new comments, ...
+This image installs postfix and configures it as a relay server at runtime.
 
 
 ```yml
@@ -31,8 +33,7 @@ services:
       MYSQL_DATABASE: wordpress
       MYSQL_USER: wordpress
       MYSQL_PASSWORD: hVKK8q8TfpXHdPJFqiXfTWkykvBPjhQf
-    volumes:
-      - ./db/mysql:/var/lib/mysql
-      - ./db/dump:/docker-entrypoint-initdb.d
 
 ```
+
+After postfix is configured, the configurarion is skipped at the next container start. To force a reconfiguration set the `FORCE_CONFIG` environment variable to `yes`.
