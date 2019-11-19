@@ -10,6 +10,8 @@ RUN apt-get update && \
     apt-get install -y \
         ansible \
         git \
+        iputils-ping \
+        iproute2 \
         libsasl2-modules \
         mailutils \
         postfix && \

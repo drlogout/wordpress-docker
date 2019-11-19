@@ -276,4 +276,10 @@ fi
 validate_envvars
 ansible-playbook /ansible/install-postfix-relay.yml
 
+# Add docker host entry to /etc/hosts to access e.g. external mysql database through host.docker.internal or dockerhost
+HOST_DOMAIN="host.docker.internal"
+HOST_SHORT="dockerhost"
+HOST_IP=$(ip route show | awk '/default/ {print $3}')
+echo -e "$HOST_IP\t$HOST_DOMAIN\t$HOST_SHORT" >> /etc/hosts
+
 exec "$@"
