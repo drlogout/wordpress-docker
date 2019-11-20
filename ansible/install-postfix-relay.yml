@@ -2,7 +2,7 @@
 
 - name: Configure postfix
   hosts: localhost
-  remote_user: root
+  remote_user: www-data
   pre_tasks:
     - stat: 
         path: /ansible/postfix-relay.installed
